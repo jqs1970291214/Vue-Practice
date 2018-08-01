@@ -3,15 +3,23 @@
         <div class="index-left">
             <div class="index-left-block">
                 <h2>全部产品</h2>
-                <h3>PC产品</h3>
-                <h3>APP</h3>
+                <template v-for="(product,index) in productList">
+                    <h3>{{ product.title }}</h3>
+                    <ul>
+                        <li v-for="item in product.list">
+                           <a :href="item.url">{{ item.name }}</a>
+                           <span class="hot-tag" v-if="item.hot">HOT</span>
+                        </li>
+                    </ul>
+                    <div class="hr" v-if="!product.last"></div>
+                </template>    
             </div>
             <div class="index-left-block lastest-news">
                 <h2>最新消息</h2>
                 <ul>
-                <li>
-                    <a class="new-item"></a>
-                </li>
+                  <li v-for="item in newsList">
+                      <a class="new-item">{{ item.title }}</a>
+                  </li>
                 </ul>
             </div>
         </div>
@@ -19,13 +27,17 @@
         <div class="index-right">
         <slide-show></slide-show>
         <div class="index-board-list">
-            <div class="index-board-item">
-            <div class="index-board-item-inner" >
-                <h2></h2>
-                <p></p>
-                <div class="index-board-button">
-                </div>  
-            </div>
+            <div class="index-board-item" 
+            v-for="(item,index) in boardList"
+            :class="[{'line-last': index % 2},
+            'index-board-' + item.id]">
+                <div class="index-board-item-inner">
+                  <h2>{{ item.title }}</h2>
+                  <p>{{ item.description }}</p>
+                  <div class="index-board-button">
+                    <a href="" class="button">立即购买</a>
+                  </div>
+                </div>
             </div>
         </div>
         </div>
@@ -36,14 +48,102 @@
 export default {
     data() {
         return {
-            productList{
-            pc: {
-
+            productList: {
+                pc: {
+                  title: 'PC产品',
+                  list: [
+                      {
+                      name: '数据统计',
+                      url: 'http://starcraft.com'
+                      },
+                      {
+                      name: '数据预测',
+                      url: 'http://warcraft.com'
+                      },
+                      {
+                      name: '流量分析',
+                      url: 'http://overwatch.com',
+                      hot: true
+                      },
+                      {
+                      name: '广告发布',
+                      url: 'http://hearstone.com'
+                      }
+                  ]
+                },
+                app: {
+                  title: '手机应用类',
+                  last: true,
+                  list: [
+                      {
+                      name: '91助手',
+                      url: 'http://weixin.com'
+                      },
+                      {
+                      name: '产品助手',
+                      url: 'http://twitter.com',
+                      hot: true
+                      },
+                      {
+                      name: '智能地图',
+                      url: 'http://maps.com'
+                      },
+                      {
+                      name: '团队语音',
+                      url: 'http://phone.com'
+                      }
+                  ]
+                }
             },
-            app: {
-
-            }
-        }
+            newsList: [
+              {
+                title: '数据统计',
+                url: 'http://starcraft.com'
+                },
+                {
+                title: '数据预测',
+                url: 'http://warcraft.com'
+                },
+                {
+                title: '流量分析',
+                url: 'http://overwatch.com',
+                hot: true
+                },
+                {
+                title: '广告发布',
+                url: 'http://hearstone.com'
+                }
+            ],
+            boardList: [
+              {
+                title: '开放产品',
+                description: '开放产品是一款开放产品',
+                id: 'car',
+                toKey: 'analysis',
+                saleout: false
+              },
+              {
+                title: '品牌营销',
+                description: '品牌营销帮助你的产品更好地找到定位',
+                id: 'earth',
+                toKey: 'count',
+                saleout: false
+              },
+              {
+                title: '使命必达',
+                description: '使命必达快速迭代永远保持最前端的速度',
+                id: 'loud',
+                toKey: 'forecast',
+                saleout: true
+              },
+              {
+                title: '勇攀高峰',
+                description: '帮你勇闯高峰，到达事业的顶峰',
+                id: 'hill',
+                toKey: 'publish',
+                saleout: false
+              }
+            ]
         }
         
     }
