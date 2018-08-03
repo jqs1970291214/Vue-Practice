@@ -25,7 +25,7 @@
         </div>
 
         <div class="index-right">
-        <slide-show :slides="slides"></slide-show>
+        <slide-show :slides="slides" :invTime="slidesSpeed"></slide-show>
         <div class="index-board-list">
             <div class="index-board-item" 
             v-for="(item,index) in boardList"
@@ -52,6 +52,7 @@ components: {
 },
 data() {
   return {
+    slidesSpeed: 2000,
     slides: [
       {
         src: require('../assets/slideShow/pic1.jpg'),

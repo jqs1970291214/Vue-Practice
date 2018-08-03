@@ -1,17 +1,23 @@
 <template>
-    <div class="slide-show">
+    <div class="slide-show" @mouseover="clearInv" @mouseout="runInv" >
         <div class="slide-img">  
-            <a :href="slides[nowIndex].src">
-                <img :src="slides[nowIndex].src">
+            <a :href="slides[nowIndex].href">
+              <!-- 当isShow变化后，nowIndex也发生了变化 -->
+              <transition name="slide-trans">
+                <img :src="slides[nowIndex].src" v-if="isShow">
+              </transition>
+              <transition name="slide-trans-old">
+                <img :src="slides[nowIndex].src" v-if="!isShow">
+              </transition>
             </a>
         </div>
         <h2>{{ slides[nowIndex].title}}</h2>
         <ul class="slide-pages">
-            <li>&lt;</li>
+            <li @click="goto(prevIndex)">&lt;</li>
             <li v-for="(item, index) in slides" @click="goto(index)">
-                <a>{{ index + 1}}</a>
+                <a :class="{on: index === nowIndex}">{{ index + 1}}</a>
             </li>
-            <li>&gt;</li>
+            <li @click="goto(nextIndex)">&gt;</li>
         </ul>
     </div>
   </div>
@@ -25,22 +31,66 @@ export default {
       default: function(){
           return [];
       }
+    },
+    invTime: {
+      type: Number,
+      default: function() {
+        return 1000;
+      }
     }
   },
   data() {
-      return {
-          nowIndex: 0
-      }
+    return {
+        nowIndex: 0,
+        invId: "",
+        isShow: true
+    }
   },
   methods: {
-      goto(index) {
-          this.nowIndex = index;
+    goto(index) {
+      this.isShow = false;
+      setTimeout(() => {
+        this.isShow = true;
+        this.nowIndex = index;
+      },10)
+    },
+    runInv() {
+      this.invId = setInterval(() => {
+        this.goto(this.nextIndex);
+      },this.invTime);
+    },
+    clearInv() {
+      clearInterval(this.invId);
+    }
+  },
+  computed: {
+    prevIndex() {
+      if (this.nowIndex === 0) {
+        return this.slides.length - 1;
+      } else {
+        return this.nowIndex - 1;
       }
+    },
+    nextIndex() {
+      if (this.nowIndex === this.slides.length - 1) {
+        return 0;
+      } else {
+        return this.nowIndex + 1;
+      }
+    }
+  },
+  mounted() {
+    this.runInv();
   }
 }
 </script>
 
 <style scoped>
+/*
+transition生效与v-if和v-show、router等动态组件
+显示的一张进来时向沿右移动了900px，当active时回归原位，在动画过程中表现为向左移动900px
+消失的一张一开始在原位置，leave-active后在沿x反方向的900像素处，动画表现为向左移动900px
+*/
 .slide-trans-enter-active {
   transition: all .5s;
 }
@@ -50,7 +100,7 @@ export default {
 .slide-trans-old-leave-active {
   transition: all .5s;
   transform: translateX(-900px);
-}
+} 
 .slide-show {
   position: relative;
   margin: 15px 15px 15px 0;
