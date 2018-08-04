@@ -81,20 +81,20 @@ data() {
         list: [
           {
             name: '数据统计',
-            url: 'http://starcraft.com'
+            url: '/detail/count'
           },
           {
             name: '数据预测',
-            url: 'http://warcraft.com'
+            url: '/detail/forecast'
           },
           {
             name: '流量分析',
-            url: 'http://overwatch.com',
+            url: '/detail/analysis',
             hot: true
           },
           {
             name: '广告发布',
-            url: 'http://hearstone.com'
+            url: '/detail/publish'
           }
         ]
       },

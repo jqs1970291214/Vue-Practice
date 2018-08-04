@@ -2,7 +2,7 @@
   <div class="detail-wrap">
     <div class="detail-left">
       <div class="product-board">
-        <img :src="imgMap[$route.path]">
+        <img :src="productIcon">
         <ul>
             <!-- active-class指定在当前路由为router-link指向的地址时的样式 -->
             <router-link tag="li" v-for="(item,index) in products" 
@@ -20,7 +20,10 @@
 
 <script>
 export default {
-    mounted() {
+    computed: {
+        productIcon() {
+            return this.imgMap[this.$route.path];
+        }
     },
     data() {
         return {
