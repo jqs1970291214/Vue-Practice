@@ -40,7 +40,7 @@ export default {
             this.errorText = '部分选项未通过';
         } else {
             this.errorText = '';
-            this.$http.post('/api/login')
+            this.$http.get('/api/login')
                 .then((res) => {
                     this.$emit('has-log', res.data.data)
                 }).catch((err) => {
