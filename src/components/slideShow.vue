@@ -64,6 +64,7 @@ export default {
     }
   },
   computed: {
+    //计算属性保存前后页
     prevIndex() {
       if (this.nowIndex === 0) {
         return this.slides.length - 1;
