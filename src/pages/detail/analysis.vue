@@ -10,6 +10,7 @@
                   购买数量：
               </div>
               <div class="sales-board-line-right">
+                <v-counter></v-counter>
               </div>
           </div>
           <div class="sales-board-line">
@@ -17,6 +18,7 @@
                   产品类型：
               </div>
               <div class="sales-board-line-right">
+                  <v-selection :selections="productTypes"></v-selection>
               </div>
           </div>
           <div class="sales-board-line">
@@ -24,6 +26,9 @@
                   有效时间：
               </div>
               <div class="sales-board-line-right">
+                  <v-chooser
+                  :selections="periodList"
+                  ></v-chooser>
               </div>
           </div>
           <div class="sales-board-line">
@@ -31,6 +36,9 @@
                   产品版本：
               </div>
               <div class="sales-board-line-right">
+                  <v-mul-chooser
+                  :selections="versionList"
+                  ></v-mul-chooser>
               </div>
           </div>
           <div class="sales-board-line">
@@ -76,11 +84,61 @@
 </template>
 
 <script>
+import VChooser from '@/components/chooser'
+import VSelection from '@/components/selection'
+import VCounter from '@/components/counter'
+import VMulChooser from '@/components/multiplyChooser'
 export default {
   components: {
+      VSelection,
+      VCounter,
+      VMulChooser,
+      VChooser
   },
   data () {
     return {
+        productTypes: [
+            {
+            label: '入门版',
+            value: 0
+            },
+            {
+            label: '中级版',
+            value: 1
+            },
+            {
+            label: '高级版',
+            value: 2
+            }
+        ],
+        versionList: [
+            {
+                label: '客户版',
+                value: 0
+            },
+            {
+                label: '代理商版',
+                value: 1
+            },
+            {
+                label: '专家版',
+                value: 2
+            }
+        ],
+        periodList: [
+            {
+            label: '半年',
+            value: 0
+            },
+            {
+            label: '一年',
+            value: 1
+            },
+            {
+            label: '三年',
+            value: 2
+            }
+        ]
     }
   }
 }
