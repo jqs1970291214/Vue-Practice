@@ -17,9 +17,12 @@
     "name": "typicode"
   },
   "login": {
-      "status": 200,
-      "data": {
-          "username": "Junqson"
-      }
+    "status": 200,
+    "data": {
+      "username": "Junqson"
+    }
+  },
+  "getPrice": {
+      "amount": 679
   }
 }

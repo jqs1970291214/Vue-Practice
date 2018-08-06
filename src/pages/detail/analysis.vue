@@ -10,7 +10,7 @@
                   购买数量：
               </div>
               <div class="sales-board-line-right">
-                <v-counter></v-counter>
+                <v-counter @on-change="onParamChange('buyNum',$event)"></v-counter>
               </div>
           </div>
           <div class="sales-board-line">
@@ -18,7 +18,9 @@
                   产品类型：
               </div>
               <div class="sales-board-line-right">
-                  <v-selection :selections="productTypes"></v-selection>
+                  <v-selection :selections="productTypes"
+                   @on-change="onParamChange('buyType',$event)">
+                   </v-selection>
               </div>
           </div>
           <div class="sales-board-line">
@@ -28,6 +30,7 @@
               <div class="sales-board-line-right">
                   <v-chooser
                   :selections="periodList"
+                  @on-change="onParamChange('period',$event)"
                   ></v-chooser>
               </div>
           </div>
@@ -38,6 +41,7 @@
               <div class="sales-board-line-right">
                   <v-mul-chooser
                   :selections="versionList"
+                  @on-change="onParamChange('versions',$event)"
                   ></v-mul-chooser>
               </div>
           </div>
@@ -46,13 +50,13 @@
                   总价：
               </div>
               <div class="sales-board-line-right">
-                  元
+                  {{ price }}元
               </div>
           </div>
           <div class="sales-board-line">
               <div class="sales-board-line-left">&nbsp;</div>
               <div class="sales-board-line-right">
-                  <div class="button">
+                  <div class="button" @click="showPayDialog">
                     立即购买
                   </div>
               </div>
@@ -80,23 +84,104 @@
           <li>用户所在地理区域分布状况等</li>
         </ul>
       </div>
+      <my-dialog :is-show="isShowPayDialog" @on-close="closePayDialog">
+            <table class="buy-dialog-table">
+                <tr>
+                    <th>购买数量</th>
+                    <th>产品类型</th>
+                    <th>有效时间</th>
+                    <th>产品版本</th>
+                    <th>总价</th>
+                </tr>
+                <tr>
+                    <td>{{ buyNum }}</td>
+                    <td>{{ buyType.label }}</td>
+                    <td>{{ period.label }}</td>
+                    <td>
+                    <span v-for="item in versions">{{ item.label }} </span>
+                    </td>
+                    <td>{{ price }}</td>
+                </tr>
+            </table>
+            <h3 class="buy-dialog-title">请选择银行</h3>
+            <bank-chooser @on-change="onChangeBanks"></bank-chooser>
+            <div class="button buy-dialog-btn" @click="confirmBuy">
+            确认购买
+            </div>
+      </my-dialog>
+      <my-dialog :is-show="isShowErrDialog" @on-close="hideErrDialog">
+        支付失败！
+      </my-dialog>
   </div>
 </template>
 
 <script>
+import Dialog from '@/components/dialog'
 import VChooser from '@/components/chooser'
 import VSelection from '@/components/selection'
 import VCounter from '@/components/counter'
 import VMulChooser from '@/components/multiplyChooser'
+import _ from 'lodash'
 export default {
   components: {
       VSelection,
       VCounter,
       VMulChooser,
-      VChooser
+      VChooser,
+      MyDialog: Dialog
+  },
+  methods: {
+      showErrorDialog() {
+          this.isShowErrorDialog = true;
+      },
+      hideErrorDialog() { 
+          this.isShowErrorDialog = false;
+      },
+      closePayDialog(){
+          this.isShowPayDialog = false;
+      },
+      showPayDialog() {
+          this.isShowPayDialog = true;
+      },
+      onParamChange(attr,val) {
+        this[attr] = val;
+        this.getPrice();
+      },
+      getPrice() {
+          let buyVersionsArray = _.map(this.versions, (obj) => {
+              return obj.value;
+          });
+          let reqParams = {
+              buyNum: this.buyNum,
+              buyType: this.buyType.value,
+              versions: buyVersionsArray.join(','),
+              period: this.period.value
+          }
+          this.$http.get('/api/getPrice',reqParams)
+              .then((res) => {
+                  console.log(res.data);
+                  this.price = res.data.amount;
+              }).catch((err) => {
+                  console.log(err)
+              })
+      }
+  },
+  mounted(){
+       this.buyNum = 1;
+       this.buyType = this.productTypes[0];
+       this.versions = [0];
+       this.period = this.periodList[0];
+       this.getPrice();
   },
   data () {
     return {
+        isShowErrorDialog: false,
+        isShowPayDialog: false,
+        price: 500,
+        buyNum: 0,
+        buyType: {},
+        versions: [],
+        period: {},
         productTypes: [
             {
             label: '入门版',
