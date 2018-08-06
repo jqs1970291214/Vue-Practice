@@ -25,10 +25,12 @@
     <div class="order-list-table">
       <table>
         <tr>
-          <th></th>
+          <th v-for="head in tableHeads" 
+          @click="changeOrder(head)"
+          :class="{active:head.active}">{{ head.label }}</th>
         </tr>
-        <tr>
-          <td></td>
+        <tr v-for="item in tableData">
+          <td v-for="head in tableHeads">{{ item[head.key] }}</td>
         </tr>
       </table>
     </div>
@@ -38,6 +40,7 @@
 <script>
 import VSelection from '@/components/selection'
 import VDatePicker from '@/components/datepicker'
+import _ from 'lodash'
 
 export default {
   components: {
@@ -46,6 +49,8 @@ export default {
   },
   data () {
     return {  
+      currentOrder: 'asc',
+      tableData:[],
       startDate: '',
       endDate: '',  
       query: '',
@@ -71,52 +76,101 @@ export default {
       tableHeads: [
         {
           label: '订单号',
-          key: 'orderId'
+          key: 'orderId',
+          active: false
         },
         {
           label: '购买产品',
-          key: 'product'
+          key: 'product',
+          active: false
+
         },
         {
           label: '版本类型',
-          key: 'version'
+          key: 'version',
+          active: false
+
         },
         {
           label: '有效时间',
-          key: 'period'
-        },
-        {
-          label: '购买日期',
-          key: 'date'
+          key: 'period',
+          active: false
+
         },
         {
           label: '数量',
-          key: 'buyNum'
+          key: 'buyNum',
+          active: false
+
+        },
+        {
+          label: '购买日期',
+          key: 'date',
+          active: false
+
         },
         {
           label: '总价',
-          key: 'amount'
+          key: 'amount',
+          active: false
+
         }
       ]
     }
   },
   watch: {
       query() {
-          console.log(this.query)
+        this.getTableData();
       }
   },
   methods: {
+    getTableData() {
+        let reqParam = {
+            productId: this.productId,
+            query: this.query,
+            startDate: this.startDate,
+            endDate: this.endDate
+        };
+        this.$http.get("/api/getOrderList", reqParam)
+            .then((res) => {
+                this.tableData = res.data.list;
+                console.log(this.tableData);
+            }).catch((err) => {
+                console.log(err)
+            });
+    },
+    changeOrder(head){
+        //每次都现将所有的表头设为false
+        this.tableHeads.map((item) => {
+            item.active = false;
+            return item;
+        });
+        head.active = true;
+        if (this.currentOrder === 'asc') {
+            this.currentOrder = 'desc';
+        } else {
+            this.currentOrder = 'asc';
+        }
+
+        this.tableData = _.orderBy(this.tableData,head.key,this.currentOrder);
+    },
     productChange(obj) {
         this.productId = obj.value;
+        this.getTableData();
     },
     changeStartDate(date) {
         this.startDate = date;
+        this.getTableData();
+
     },
     changeEndDate(date) {
         this.endDate = date;
+        this.getTableData();
+
     }
   },
   mounted () {
+      this.getTableData();
   }
 }
 </script>
