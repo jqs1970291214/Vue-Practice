@@ -121,6 +121,7 @@ import VChooser from '@/components/chooser'
 import VSelection from '@/components/selection'
 import VCounter from '@/components/counter'
 import VMulChooser from '@/components/multiplyChooser'
+import BankChooser from '@/components/bankChooser'
 import _ from 'lodash'
 export default {
   components: {
@@ -128,14 +129,37 @@ export default {
       VCounter,
       VMulChooser,
       VChooser,
-      MyDialog: Dialog
+      MyDialog: Dialog,
+      BankChooser
   },
   methods: {
-      showErrorDialog() {
-          this.isShowErrorDialog = true;
+      confirmBuy() {
+          let buyVersionsArray = _.map(this.versions, (obj) => {
+              return obj.value;
+          });
+          let reqParams = {
+              buyNum: this.buyNum,
+              buyType: this.buyType.value,
+              versions: buyVersionsArray.join(','),
+              period: this.period.value,
+              bankId: this.bankId
+          }
+          this.$http.get('/api/createOrder',reqParams)
+              .then((res) => {
+                  this.orderId = res.data.orderId;
+              }).catch((err) => {
+                  console.log(err)
+              })
       },
-      hideErrorDialog() { 
-          this.isShowErrorDialog = false;
+      onChangeBanks(bank) {
+          this.bankId = bank.id;
+          console.log(bank)
+      },
+      showErrDialog() {
+          this.isShowErrDialog = true;
+      },
+      hideErrDialog() { 
+          this.isShowErrDialog = false;
       },
       closePayDialog(){
           this.isShowPayDialog = false;
@@ -159,7 +183,6 @@ export default {
           }
           this.$http.get('/api/getPrice',reqParams)
               .then((res) => {
-                  console.log(res.data);
                   this.price = res.data.amount;
               }).catch((err) => {
                   console.log(err)
@@ -175,7 +198,8 @@ export default {
   },
   data () {
     return {
-        isShowErrorDialog: false,
+        orderId: '',
+        isShowErrDialog: false,
         isShowPayDialog: false,
         price: 500,
         buyNum: 0,
