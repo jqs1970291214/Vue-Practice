@@ -6,7 +6,7 @@ import Analysis from "@/pages/detail/analysis"
 import Count from "@/pages/detail/count"
 import Forecast from "@/pages/detail/forecast"
 import Publish from "@/pages/detail/publish"
-
+import OrderList from "@/pages/orderList"
 
 
 
@@ -19,6 +19,10 @@ export default new Router({
       {
         path: '/',
         component: IndexPage
+      },
+      {
+        path: '/orderList',
+        component: OrderList
       },
       {
         path: '/detail',
