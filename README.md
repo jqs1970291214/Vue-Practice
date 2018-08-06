@@ -1,4 +1,5 @@
 ### vue-project-practice
+Simple Sale Platform
 
 learn vue-cli
 

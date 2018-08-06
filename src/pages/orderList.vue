@@ -50,7 +50,7 @@ export default {
   data () {
     return {  
       currentOrder: 'asc',
-      tableData:[],
+      tableData:[], // 如果使用vuex，写作this.$store.getTableData
       startDate: '',
       endDate: '',  
       query: '',
@@ -157,6 +157,12 @@ export default {
     productChange(obj) {
         this.productId = obj.value;
         this.getTableData();
+        // 使用vuex的话
+        // this.$store.commit('updateParams',{  //提交mutations
+        //     key: 'productId',
+        //     val: obj.value
+        // });
+        // this.$store.dispatch('fetchOrderList') 调度actions
     },
     changeStartDate(date) {
         this.startDate = date;
