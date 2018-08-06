@@ -112,6 +112,8 @@
       <my-dialog :is-show="isShowErrDialog" @on-close="hideErrDialog">
         支付失败！
       </my-dialog>
+      <check-order :is-show-check-dialog="isShowCheckOrder"
+      @on-close="closeCheckOrder" :order-id="orderId"></check-order>
   </div>
 </template>
 
@@ -122,6 +124,7 @@ import VSelection from '@/components/selection'
 import VCounter from '@/components/counter'
 import VMulChooser from '@/components/multiplyChooser'
 import BankChooser from '@/components/bankChooser'
+import CheckOrder from '@/components/checkOrder'
 import _ from 'lodash'
 export default {
   components: {
@@ -130,9 +133,13 @@ export default {
       VMulChooser,
       VChooser,
       MyDialog: Dialog,
-      BankChooser
+      BankChooser,
+      CheckOrder
   },
   methods: {
+      closeCheckOrder() {
+          this.isShowCheckOrder = false;
+      },
       confirmBuy() {
           let buyVersionsArray = _.map(this.versions, (obj) => {
               return obj.value;
@@ -147,13 +154,15 @@ export default {
           this.$http.get('/api/createOrder',reqParams)
               .then((res) => {
                   this.orderId = res.data.orderId;
+                  this.isShowCheckOrder = true;
+                  this.isShowPayDialog = false;
               }).catch((err) => {
-                  console.log(err)
+                  this.isShowErrDialog = true;
+                  this.isShowPayDialog = false;
               })
       },
       onChangeBanks(bank) {
           this.bankId = bank.id;
-          console.log(bank)
       },
       showErrDialog() {
           this.isShowErrDialog = true;
@@ -201,6 +210,7 @@ export default {
         orderId: '',
         isShowErrDialog: false,
         isShowPayDialog: false,
+        isShowCheckOrder: false,
         price: 500,
         buyNum: 0,
         buyType: {},

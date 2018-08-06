@@ -23,9 +23,12 @@
     }
   },
   "getPrice": {
-      "amount": 679
+    "amount": 679
   },
   "createOrder": {
     "orderId": "6djk979"
+  },
+  "checkOrder": {
+    "success": true
   }
 }
